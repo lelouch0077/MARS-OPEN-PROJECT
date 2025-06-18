@@ -34,12 +34,19 @@ Confusion Matrix was:
  
  #### Per Class Accuracy
  Class Neutral Accuracy: 0.9211
+ 
 Class Calm Accuracy: 0.9200
+
 Class Happy Accuracy: 0.8400
+
 Class Sad Accuracy: 0.8000
+
 Class Angry Accuracy: 0.9467
+
 Class Fearful Accuracy: 0.8267
+
 Class Disgust Accuracy: 0.9231
+
 Class Surprised Accuracy: 1.0000
 
 
