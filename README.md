@@ -15,6 +15,7 @@ Training was performed on 80% of the dataset.The model was trained using the cro
 ## VALIDATION METRICS
 Validation was performed on 20% of the total data.The validation accuracy was 88.59% and F1 score was 88.96%.
 Confusion Matrix was:
+
 [[35  1  2  0  0  0  0  0]
 
  [ 1 69  1  3  0  0  1  0]
