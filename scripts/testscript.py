@@ -8,21 +8,18 @@ import torch.nn as nn
 import numpy as np
 import torch.nn.functional as F
 
-# ----------------------------
-# Load Model and Processor
-# ----------------------------
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 processor = WhisperProcessor.from_pretrained("openai/whisper-base")
 whisper_model = WhisperModel.from_pretrained("openai/whisper-base").to(DEVICE)
 whisper_model.eval()
-class ImprovedWhisperMLP(nn.Module):
+class WhisperMLP(nn.Module):
     def __init__(self, input_dim=512, num_classes=8):
         super(ImprovedWhisperMLP, self).__init__()
 
         self.net = nn.Sequential(
-            nn.LayerNorm(input_dim),                     # Normalize input
+            nn.LayerNorm(input_dim),                     
             nn.Linear(input_dim, 1024),
             nn.BatchNorm1d(1024),
             nn.ReLU(),
@@ -42,27 +39,19 @@ class ImprovedWhisperMLP(nn.Module):
     def forward(self, x):
         return self.net(x)
 
-classifier = ImprovedWhisperMLP()
+classifier = WhisperMLP()
 classifier.load_state_dict(torch.load(r"C:\Users\Raihan\OneDrive\Desktop\OPEN_PROJECT_AUDIO\scripts\whisper_model.pth", map_location=DEVICE))
 classifier.to(DEVICE)
 classifier.eval()
 
-# ----------------------------
-# Emotion labels (edit if needed)
-# ----------------------------
 LABELS = ['neutral', 'calm', 'happy', 'sad', 'angry', 'fearful', 'disgust', 'surprised']
 
-# ----------------------------
-# Function to extract audio
-# ----------------------------
+
 def extract_audio_from_video(video_path, output_wav_path):
     clip = VideoFileClip(video_path)
     clip.audio.write_audiofile(output_wav_path, fps=16000, codec='pcm_s16le', nbytes=2, ffmpeg_params=["-ac", "1"])
     clip.close()
 
-# ----------------------------
-# Function to predict emotion
-# ----------------------------
 def predict_emotion_from_audio(wav_path):
     waveform, sr = torchaudio.load(wav_path)
 
@@ -84,12 +73,9 @@ def predict_emotion_from_audio(wav_path):
         pred_class = torch.argmax(F.softmax(pred, dim=1), dim=1).item()
         return LABELS[pred_class]
 
-# ----------------------------
-# Main Execution
-# ----------------------------
+
 if __name__ == "__main__":
-    # 🔽 Set your video path here
-    video_path = r"C:\Users\Raihan\OneDrive\Desktop\01-02-03-01-02-01-20.mp4" # <<< change this line
+    video_path = r"C:\Users\Raihan\OneDrive\Desktop\01-02-03-01-02-01-20.mp4" # put file paths of 1 video(mp4) here it will give emotion of the video after audio extraction
 
     with tempfile.TemporaryDirectory() as tmpdir:
         audio_path = os.path.join(tmpdir, "audio.wav")
