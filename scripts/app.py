@@ -7,13 +7,9 @@ from transformers import WhisperProcessor, WhisperModel
 import numpy as np
 from tempfile import NamedTemporaryFile
 
-# ----------------------------
-# Setup
-# ----------------------------
-
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# Load Whisper encoder and processor
+
 processor = WhisperProcessor.from_pretrained("openai/whisper-base")
 whisper_model = WhisperModel.from_pretrained("openai/whisper-base").to(DEVICE)
 whisper_model.eval()
@@ -22,7 +18,7 @@ class ImprovedWhisperMLP(nn.Module):
         super(ImprovedWhisperMLP, self).__init__()
 
         self.net = nn.Sequential(
-            nn.LayerNorm(input_dim),                     # Normalize input
+            nn.LayerNorm(input_dim),                    
             nn.Linear(input_dim, 1024),
             nn.BatchNorm1d(1024),
             nn.ReLU(),
@@ -49,9 +45,6 @@ classifier.eval()
 
 LABELS = ['Neutral', 'Calm', 'Happy', 'Sad', 'Angry', 'Fearful', 'Disgust', 'Surprised']
 
-# ----------------------------
-# Predict Function
-# ----------------------------
 def predict_emotion(wav_path):
     waveform, sr = torchaudio.load(wav_path)
 
@@ -73,9 +66,6 @@ def predict_emotion(wav_path):
         pred_class = torch.argmax(F.softmax(pred, dim=1), dim=1).item()
         return LABELS[pred_class]
 
-# ----------------------------
-# Streamlit UI
-# ----------------------------
 st.title("🎙️ Audio Emotion Recognition")
 st.write("Upload a `.wav` file and get the predicted emotion.")
 
